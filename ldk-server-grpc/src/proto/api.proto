@@ -178,6 +178,12 @@ message Bolt11ReceiveForHashRequest {
 
   // The hex-encoded 32-byte payment hash to use for the invoice.
   string payment_hash = 4;
+
+  // Optional minimum final CLTV expiry delta, in blocks, to require in the invoice.
+  // A larger value forces the payer to build the final hop with more CLTV, giving a
+  // hold-invoice holder more on-chain time to obtain the preimage and claim before
+  // the HTLC must be failed back. Must fit in a u16. If unset, the node default is used.
+  optional uint32 min_final_cltv_expiry_delta = 5;
 }
 
 // The response for the `Bolt11ReceiveForHash` RPC. On failure, a gRPC error status is returned.
