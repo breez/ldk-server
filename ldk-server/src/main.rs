@@ -28,6 +28,7 @@ use ldk_node::bitcoin::Network;
 use ldk_node::config::Config;
 use ldk_node::lightning::events::ClosureReason;
 use ldk_node::lightning::ln::channelmanager::PaymentId;
+use ldk_node::payment::PaymentDirection;
 use ldk_node::lightning::ln::types::ChannelId;
 use ldk_node::{Builder, CustomTlvRecord, Event, Node};
 use ldk_server_grpc::events;
@@ -465,6 +466,7 @@ fn main() {
 
 							send_event_and_upsert_payment(
 								&payment_id,
+								PaymentDirection::Inbound,
 								move |payment_ref| {
 									event_envelope::Event::PaymentReceived(events::PaymentReceived {
 										payment: Some(payment_ref.clone()),
@@ -483,7 +485,7 @@ fn main() {
 						Event::PaymentSuccessful {payment_id, ..} => {
 							let payment_id = payment_id.expect("PaymentId expected for ldk-server >=0.1");
 
-							send_event_and_upsert_payment(&payment_id,
+							send_event_and_upsert_payment(&payment_id, PaymentDirection::Outbound,
 								|payment_ref| event_envelope::Event::PaymentSuccessful(events::PaymentSuccessful {
 									payment: Some(payment_ref.clone()),
 								}),
@@ -499,7 +501,7 @@ fn main() {
 						Event::PaymentFailed {payment_id, ..} => {
 							let payment_id = payment_id.expect("PaymentId expected for ldk-server >=0.1");
 
-							send_event_and_upsert_payment(&payment_id,
+							send_event_and_upsert_payment(&payment_id, PaymentDirection::Outbound,
 								|payment_ref| event_envelope::Event::PaymentFailed(events::PaymentFailed {
 									payment: Some(payment_ref.clone()),
 								}),
@@ -514,6 +516,7 @@ fn main() {
 						Event::PaymentClaimable { payment_id, custom_records, claim_deadline, .. } => {
 							send_event_and_upsert_payment(
 								&payment_id,
+								PaymentDirection::Inbound,
 								|payment_ref| {
 									event_envelope::Event::PaymentClaimable(
 										build_payment_claimable_proto(payment_ref, &custom_records, claim_deadline),
@@ -654,11 +657,13 @@ fn main() {
 }
 
 fn send_event_and_upsert_payment(
-	payment_id: &PaymentId, payment_to_event: impl FnOnce(&Payment) -> event_envelope::Event,
-	event_node: &Node, event_sender: &broadcast::Sender<EventEnvelope>,
-	paginated_store: Arc<dyn PaginatedKVStore>,
+	payment_id: &PaymentId, direction: PaymentDirection,
+	payment_to_event: impl FnOnce(&Payment) -> event_envelope::Event, event_node: &Node,
+	event_sender: &broadcast::Sender<EventEnvelope>, paginated_store: Arc<dyn PaginatedKVStore>,
 ) {
-	if let Some(payment_details) = event_node.payment(payment_id) {
+	// An id names both sides of a payment we made to ourselves, so each event has to
+	// ask for the side it reports on.
+	if let Some(payment_details) = event_node.payment_directed(payment_id, direction) {
 		let payment = payment_to_proto(payment_details);
 
 		let event = payment_to_event(&payment);
