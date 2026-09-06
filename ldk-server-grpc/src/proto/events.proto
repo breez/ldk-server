@@ -121,6 +121,10 @@ message PaymentClaimable {
   repeated types.CustomTlvRecord custom_records = 2;
   // The block height by which this payment must be claimed before it is failed back.
   optional uint32 claim_deadline = 3;
+  // What the payer actually sent, which is the only place this is reported for
+  // an invoice that named no amount: the payment's own amount is the invoice's,
+  // and an amountless invoice has none.
+  uint64 claimable_amount_msat = 4;
 }
 
 // PaymentForwarded indicates a payment was forwarded through the node.

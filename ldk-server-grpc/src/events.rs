@@ -193,6 +193,11 @@ pub struct PaymentClaimable {
 	/// The block height by which this payment must be claimed before it is failed back.
 	#[prost(uint32, optional, tag = "3")]
 	pub claim_deadline: ::core::option::Option<u32>,
+	/// What the payer actually sent, which is the only place this is reported for
+	/// an invoice that named no amount: the payment's own amount is the invoice's,
+	/// and an amountless invoice has none.
+	#[prost(uint64, tag = "4")]
+	pub claimable_amount_msat: u64,
 }
 /// PaymentForwarded indicates a payment was forwarded through the node.
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]

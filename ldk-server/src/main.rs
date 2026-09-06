@@ -28,8 +28,8 @@ use ldk_node::bitcoin::Network;
 use ldk_node::config::Config;
 use ldk_node::lightning::events::ClosureReason;
 use ldk_node::lightning::ln::channelmanager::PaymentId;
-use ldk_node::payment::PaymentDirection;
 use ldk_node::lightning::ln::types::ChannelId;
+use ldk_node::payment::PaymentDirection;
 use ldk_node::{Builder, CustomTlvRecord, Event, Node};
 use ldk_server_grpc::events;
 use ldk_server_grpc::events::{event_envelope, EventEnvelope};
@@ -513,13 +513,24 @@ fn main() {
 								metrics.update_payments_count(false);
 							}
 						},
-						Event::PaymentClaimable { payment_id, custom_records, claim_deadline, .. } => {
+						Event::PaymentClaimable {
+							payment_id,
+							custom_records,
+							claim_deadline,
+							claimable_amount_msat,
+							..
+						} => {
 							send_event_and_upsert_payment(
 								&payment_id,
 								PaymentDirection::Inbound,
 								|payment_ref| {
 									event_envelope::Event::PaymentClaimable(
-										build_payment_claimable_proto(payment_ref, &custom_records, claim_deadline),
+										build_payment_claimable_proto(
+											payment_ref,
+											&custom_records,
+											claim_deadline,
+											claimable_amount_msat,
+										),
 									)
 								},
 								&event_node,
@@ -878,6 +889,7 @@ fn load_or_generate_api_key(storage_dir: &Path) -> std::io::Result<String> {
 
 fn build_payment_claimable_proto(
 	payment_ref: &Payment, custom_records: &[CustomTlvRecord], claim_deadline: Option<u32>,
+	claimable_amount_msat: u64,
 ) -> events::PaymentClaimable {
 	let proto_custom_records: Vec<_> =
 		custom_records.iter().map(node_to_proto_custom_tlv).collect();
@@ -885,6 +897,7 @@ fn build_payment_claimable_proto(
 		payment: Some(payment_ref.clone()),
 		custom_records: proto_custom_records,
 		claim_deadline,
+		claimable_amount_msat,
 	}
 }
 
