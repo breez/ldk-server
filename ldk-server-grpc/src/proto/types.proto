@@ -89,6 +89,14 @@ message Bolt11 {
   //
   // [bLIP-52 / LSPS 2]: https://github.com/lightning/blips/blob/master/blip-0052.md 
   optional uint64 counterparty_skimmed_fee_msat = 4;
+
+  // The block height by which this payment had to be claimed before it would be
+  // failed back, as reported when it became claimable.
+  //
+  // Set for an inbound payment that was held, which is the only case with a
+  // deadline to meet. Reading it back is the only way to learn how long a held
+  // payment has left, since nothing else recorded about the payment implies it.
+  optional uint32 claim_deadline = 5;
 }
 
 // Represents a BOLT 12 ‘offer’ payment, i.e., a payment for an Offer.

@@ -165,6 +165,14 @@ pub struct Bolt11 {
 	/// [bLIP-52 / LSPS 2]: <https://github.com/lightning/blips/blob/master/blip-0052.md>
 	#[prost(uint64, optional, tag = "4")]
 	pub counterparty_skimmed_fee_msat: ::core::option::Option<u64>,
+	/// The block height by which this payment had to be claimed before it would be
+	/// failed back, as reported when it became claimable.
+	///
+	/// Set for an inbound payment that was held, which is the only case with a
+	/// deadline to meet. Reading it back is the only way to learn how long a held
+	/// payment has left, since nothing else recorded about the payment implies it.
+	#[prost(uint32, optional, tag = "5")]
+	pub claim_deadline: ::core::option::Option<u32>,
 }
 /// Represents a BOLT 12 ‘offer’ payment, i.e., a payment for an Offer.
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
