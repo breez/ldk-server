@@ -21,6 +21,7 @@ use ldk_server_client::config::{
 use ldk_server_client::error::LdkServerError;
 use ldk_server_client::error::LdkServerErrorCode::{
 	AuthError, InternalError, InternalServerError, InvalidRequestError, LightningError,
+	PaymentSendingFailed,
 };
 use ldk_server_client::ldk_server_grpc::api::{
 	Bolt11ClaimForHashRequest, Bolt11ClaimForHashResponse, Bolt11FailForHashRequest,
@@ -1292,6 +1293,7 @@ fn handle_error(e: LdkServerError) -> ! {
 		InvalidRequestError => "Invalid Request",
 		AuthError => "Authentication Error",
 		LightningError => "Lightning Error",
+		PaymentSendingFailed => "Payment Sending Failed",
 		InternalServerError => "Internal Server Error",
 		InternalError => "Internal Error",
 	};

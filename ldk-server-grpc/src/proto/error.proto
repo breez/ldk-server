@@ -42,4 +42,9 @@ enum ErrorCode {
 
   // Used when an internal server error occurred. The client is probably at no fault.
   INTERNAL_SERVER_ERROR = 4;
+
+  // Used when the node tried to send a payment and the payment failed. Separate from
+  // `LIGHTNING_ERROR` because the attempt is over: the payment is recorded as failed, so
+  // repeating the same request is not what the caller wants.
+  PAYMENT_SENDING_FAILED = 5;
 }

@@ -51,6 +51,10 @@ pub enum ErrorCode {
 	LightningError = 3,
 	/// Used when an internal server error occurred. The client is probably at no fault.
 	InternalServerError = 4,
+	/// Used when the node tried to send a payment and the payment failed. Separate from
+	/// `LIGHTNING_ERROR` because the attempt is over: the payment is recorded as failed, so
+	/// repeating the same request is not what the caller wants.
+	PaymentSendingFailed = 5,
 }
 impl ErrorCode {
 	/// String value of the enum field names used in the ProtoBuf definition.
@@ -64,6 +68,7 @@ impl ErrorCode {
 			ErrorCode::AuthError => "AUTH_ERROR",
 			ErrorCode::LightningError => "LIGHTNING_ERROR",
 			ErrorCode::InternalServerError => "INTERNAL_SERVER_ERROR",
+			ErrorCode::PaymentSendingFailed => "PAYMENT_SENDING_FAILED",
 		}
 	}
 	/// Creates an enum from field names used in the ProtoBuf definition.
@@ -74,6 +79,7 @@ impl ErrorCode {
 			"AUTH_ERROR" => Some(Self::AuthError),
 			"LIGHTNING_ERROR" => Some(Self::LightningError),
 			"INTERNAL_SERVER_ERROR" => Some(Self::InternalServerError),
+			"PAYMENT_SENDING_FAILED" => Some(Self::PaymentSendingFailed),
 			_ => None,
 		}
 	}

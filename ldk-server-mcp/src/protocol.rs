@@ -49,6 +49,7 @@ impl From<LdkServerError> for McpError {
 			LdkServerErrorCode::InvalidRequestError => INVALID_PARAMS,
 			LdkServerErrorCode::AuthError
 			| LdkServerErrorCode::LightningError
+			| LdkServerErrorCode::PaymentSendingFailed
 			| LdkServerErrorCode::InternalServerError
 			| LdkServerErrorCode::InternalError => INTERNAL_ERROR,
 		};

@@ -53,6 +53,9 @@ pub enum LdkServerErrorCode {
 	/// Please refer to [`ldk_server_grpc::error::ErrorCode::InternalServerError`].
 	InternalServerError,
 
+	/// Please refer to [`ldk_server_grpc::error::ErrorCode::PaymentSendingFailed`].
+	PaymentSendingFailed,
+
 	/// There is an unknown error, it could be a client-side bug, unrecognized error-code, network error
 	/// or something else.
 	InternalError,
@@ -65,6 +68,7 @@ impl fmt::Display for LdkServerErrorCode {
 			LdkServerErrorCode::AuthError => write!(f, "AuthError"),
 			LdkServerErrorCode::LightningError => write!(f, "LightningError"),
 			LdkServerErrorCode::InternalServerError => write!(f, "InternalServerError"),
+			LdkServerErrorCode::PaymentSendingFailed => write!(f, "PaymentSendingFailed"),
 			LdkServerErrorCode::InternalError => write!(f, "InternalError"),
 		}
 	}

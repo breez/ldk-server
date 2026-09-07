@@ -54,9 +54,9 @@ use ldk_server_grpc::endpoints::{
 };
 use ldk_server_grpc::events::EventEnvelope;
 use ldk_server_grpc::grpc::{
-	decode_grpc_body, encode_grpc_frame, percent_decode, GRPC_STATUS_FAILED_PRECONDITION,
-	GRPC_STATUS_INTERNAL, GRPC_STATUS_INVALID_ARGUMENT, GRPC_STATUS_OK,
-	GRPC_STATUS_UNAUTHENTICATED, GRPC_STATUS_UNAVAILABLE,
+	decode_grpc_body, encode_grpc_frame, percent_decode, GRPC_STATUS_ABORTED,
+	GRPC_STATUS_FAILED_PRECONDITION, GRPC_STATUS_INTERNAL, GRPC_STATUS_INVALID_ARGUMENT,
+	GRPC_STATUS_OK, GRPC_STATUS_UNAUTHENTICATED, GRPC_STATUS_UNAVAILABLE,
 };
 use prost::Message;
 use reqwest::header::HeaderMap;
@@ -67,6 +67,7 @@ use rustls_pemfile::certs;
 use crate::error::LdkServerError;
 use crate::error::LdkServerErrorCode::{
 	AuthError, InternalError, InternalServerError, InvalidRequestError, LightningError,
+	PaymentSendingFailed,
 };
 
 type StreamingClient = HyperClient<HttpsConnector<hyper::client::HttpConnector>, HyperBody>;
@@ -560,6 +561,7 @@ fn grpc_code_to_error(code: u32, message: String) -> LdkServerError {
 	match code {
 		GRPC_STATUS_INVALID_ARGUMENT => LdkServerError::new(InvalidRequestError, message),
 		GRPC_STATUS_FAILED_PRECONDITION => LdkServerError::new(LightningError, message),
+		GRPC_STATUS_ABORTED => LdkServerError::new(PaymentSendingFailed, message),
 		GRPC_STATUS_INTERNAL => LdkServerError::new(InternalServerError, message),
 		GRPC_STATUS_UNAVAILABLE => LdkServerError::new(
 			InternalError,

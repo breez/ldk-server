@@ -34,9 +34,10 @@ use ldk_server_grpc::endpoints::{
 use ldk_server_grpc::events::EventEnvelope;
 use ldk_server_grpc::grpc::{
 	decode_grpc_body, encode_grpc_frame, grpc_error_response, grpc_response, parse_grpc_timeout,
-	validate_grpc_request, GrpcBody, GrpcStatus, GRPC_STATUS_DEADLINE_EXCEEDED,
-	GRPC_STATUS_FAILED_PRECONDITION, GRPC_STATUS_INTERNAL, GRPC_STATUS_INVALID_ARGUMENT,
-	GRPC_STATUS_UNAUTHENTICATED, GRPC_STATUS_UNAVAILABLE, GRPC_STATUS_UNIMPLEMENTED,
+	validate_grpc_request, GrpcBody, GrpcStatus, GRPC_STATUS_ABORTED,
+	GRPC_STATUS_DEADLINE_EXCEEDED, GRPC_STATUS_FAILED_PRECONDITION, GRPC_STATUS_INTERNAL,
+	GRPC_STATUS_INVALID_ARGUMENT, GRPC_STATUS_UNAUTHENTICATED, GRPC_STATUS_UNAVAILABLE,
+	GRPC_STATUS_UNIMPLEMENTED,
 };
 use prost::Message;
 use tokio::sync::{broadcast, mpsc};
@@ -557,6 +558,7 @@ pub(crate) fn ldk_error_to_grpc_status(e: LdkServerError) -> GrpcStatus {
 		LdkServerErrorCode::AuthError => GRPC_STATUS_UNAUTHENTICATED,
 		LdkServerErrorCode::LightningError => GRPC_STATUS_FAILED_PRECONDITION,
 		LdkServerErrorCode::InternalServerError => GRPC_STATUS_INTERNAL,
+		LdkServerErrorCode::PaymentSendingFailed => GRPC_STATUS_ABORTED,
 	};
 	GrpcStatus { code, message: e.message }
 }

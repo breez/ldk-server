@@ -52,6 +52,9 @@ pub(crate) enum LdkServerErrorCode {
 
 	/// Please refer to [`protos::error::ErrorCode::InternalServerError`].
 	InternalServerError,
+
+	/// Please refer to [`protos::error::ErrorCode::PaymentSendingFailed`].
+	PaymentSendingFailed,
 }
 
 impl fmt::Display for LdkServerErrorCode {
@@ -61,6 +64,7 @@ impl fmt::Display for LdkServerErrorCode {
 			LdkServerErrorCode::AuthError => write!(f, "AuthError"),
 			LdkServerErrorCode::LightningError => write!(f, "LightningError"),
 			LdkServerErrorCode::InternalServerError => write!(f, "InternalServerError"),
+			LdkServerErrorCode::PaymentSendingFailed => write!(f, "PaymentSendingFailed"),
 		}
 	}
 }
@@ -99,7 +103,6 @@ impl From<NodeError> for LdkServerError {
 			| NodeError::InvoiceRequestCreationFailed
 			| NodeError::OfferCreationFailed
 			| NodeError::RefundCreationFailed
-			| NodeError::PaymentSendingFailed
 			| NodeError::InvalidCustomTlvs
 			| NodeError::ProbeSendingFailed
 			| NodeError::ChannelCreationFailed
@@ -111,6 +114,9 @@ impl From<NodeError> for LdkServerError {
 			| NodeError::UnsupportedCurrency
 			| NodeError::HrnParsingFailed
 			| NodeError::LiquidityFeeTooHigh => (error.to_string(), LdkServerErrorCode::LightningError),
+			NodeError::PaymentSendingFailed => {
+				(error.to_string(), LdkServerErrorCode::PaymentSendingFailed)
+			},
 			NodeError::AlreadyRunning
 			| NodeError::NotRunning
 			| NodeError::PersistenceFailed
