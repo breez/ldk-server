@@ -10,3 +10,25 @@ lto = true
 
 [profile.dev]
 panic = "abort"
+
+# Resolve ldk-node to the breez fork, which exposes min_final_cltv_expiry_delta on
+# receive-for-hash, keys its payment store by (id, direction), and records a held
+# payment's claim deadline. Drop this patch once the changes land upstream.
+[patch."https://github.com/lightningdevkit/ldk-node"]
+ldk-node = { git = "https://github.com/breez/ldk-node", branch = "ssp" }
+
+# Override every lightning-* crate to the fork branch carrying the self-payment
+# change, based on the revision ldk-node pins, so the graph resolves to one set.
+[patch."https://github.com/lightningdevkit/rust-lightning"]
+lightning = { git = "https://github.com/breez/rust-lightning", branch = "ssp" }
+lightning-types = { git = "https://github.com/breez/rust-lightning", branch = "ssp" }
+lightning-invoice = { git = "https://github.com/breez/rust-lightning", branch = "ssp" }
+lightning-net-tokio = { git = "https://github.com/breez/rust-lightning", branch = "ssp" }
+lightning-persister = { git = "https://github.com/breez/rust-lightning", branch = "ssp" }
+lightning-background-processor = { git = "https://github.com/breez/rust-lightning", branch = "ssp" }
+lightning-rapid-gossip-sync = { git = "https://github.com/breez/rust-lightning", branch = "ssp" }
+lightning-block-sync = { git = "https://github.com/breez/rust-lightning", branch = "ssp" }
+lightning-transaction-sync = { git = "https://github.com/breez/rust-lightning", branch = "ssp" }
+lightning-liquidity = { git = "https://github.com/breez/rust-lightning", branch = "ssp" }
+lightning-macros = { git = "https://github.com/breez/rust-lightning", branch = "ssp" }
+lightning-dns-resolver = { git = "https://github.com/breez/rust-lightning", branch = "ssp" }
