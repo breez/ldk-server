@@ -13,7 +13,8 @@ panic = "abort"
 
 # Resolve ldk-node to the breez fork, which exposes min_final_cltv_expiry_delta on
 # receive-for-hash, keys its payment store by (id, direction), and records a held
-# payment's claim deadline. Drop this patch once the changes land upstream.
+# payment's claim deadline and claimable amount. Drop this patch once the changes
+# land upstream.
 [patch."https://github.com/lightningdevkit/ldk-node"]
 ldk-node = { git = "https://github.com/breez/ldk-node", branch = "ssp" }
 

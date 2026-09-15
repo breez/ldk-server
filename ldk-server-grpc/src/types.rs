@@ -173,6 +173,13 @@ pub struct Bolt11 {
 	/// payment has left, since nothing else recorded about the payment implies it.
 	#[prost(uint32, optional, tag = "5")]
 	pub claim_deadline: ::core::option::Option<u32>,
+	/// The amount, in thousands of a satoshi, the payment carried when it last
+	/// became claimable.
+	///
+	/// Set for an inbound payment that was held. For an invoice that names no
+	/// amount, reading it back is the only way to learn what a held payment carries.
+	#[prost(uint64, optional, tag = "6")]
+	pub claimable_amount_msat: ::core::option::Option<u64>,
 }
 /// Represents a BOLT 12 ‘offer’ payment, i.e., a payment for an Offer.
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]

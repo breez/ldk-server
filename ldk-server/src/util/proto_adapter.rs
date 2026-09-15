@@ -161,6 +161,7 @@ pub(crate) fn payment_kind_to_proto(
 			secret,
 			counterparty_skimmed_fee_msat,
 			claim_deadline,
+			claimable_amount_msat,
 		} => ldk_server_grpc::types::PaymentKind {
 			kind: Some(Bolt11(ldk_server_grpc::types::Bolt11 {
 				hash: hash.to_string(),
@@ -168,6 +169,7 @@ pub(crate) fn payment_kind_to_proto(
 				secret: secret.map(|s| Bytes::copy_from_slice(&s.0)),
 				counterparty_skimmed_fee_msat,
 				claim_deadline,
+				claimable_amount_msat,
 			})),
 		},
 		PaymentKind::Bolt12Offer { hash, preimage, secret, offer_id, payer_note, quantity } => {

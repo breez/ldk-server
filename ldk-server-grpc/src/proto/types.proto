@@ -97,6 +97,13 @@ message Bolt11 {
   // deadline to meet. Reading it back is the only way to learn how long a held
   // payment has left, since nothing else recorded about the payment implies it.
   optional uint32 claim_deadline = 5;
+
+  // The amount, in thousands of a satoshi, the payment carried when it last
+  // became claimable.
+  //
+  // Set for an inbound payment that was held. For an invoice that names no
+  // amount, reading it back is the only way to learn what a held payment carries.
+  optional uint64 claimable_amount_msat = 6;
 }
 
 // Represents a BOLT 12 ‘offer’ payment, i.e., a payment for an Offer.
