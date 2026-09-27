@@ -7,10 +7,10 @@
 // You may not use this file except in accordance with one or both of these
 // licenses.
 
-use bytes::Bytes;
-use hex::prelude::*;
 use std::collections::BTreeMap;
 
+use bytes::Bytes;
+use hex::prelude::*;
 use ldk_node::bitcoin::hashes::sha256;
 use ldk_node::bitcoin::Network;
 use ldk_node::config::{ChannelConfig, MaxDustHTLCExposure};
